@@ -58,8 +58,6 @@ unlinked_spec.ds
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
 **/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
@@ -93,7 +91,6 @@ unlinked_spec.ds
 **/ios/Flutter/.last_build_id
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
-**/ios/Runner.xcodeproj/project.pbxproj
 
 # macOS
 **/macos/Flutter/GeneratedPluginRegistrant.swift
