@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:td_movie/ui/components/bubble_bottom_navigation/bubble_bottom_navigation.dart';
 
-import 'components/bubble_bottom_navigation_bar.dart';
-import 'components/bubble_bottom_navigation_bar_item.dart';
 import 'extension/iterable_ext.dart';
+import 'ui/components/common/screen_with_tab.dart';
+import 'ui/screen/home/home_page.dart';
 
 void main() {
   runApp(App());
@@ -19,55 +21,54 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: MainPage(),
+      home: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle(statusBarColor: Colors.black),
+        child: MainPage(),
+      ),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  final _titles = ['Home', 'Categories', 'Favorite'];
-  final _colors = [Colors.red, Colors.purple, Colors.teal];
-  final _icons = [Icons.home, Icons.category, Icons.favorite];
+  final screens = <ScreenWithTab>[
+    ScreenWithTab(
+      page: HomePage(),
+      title: 'Home',
+      color: Colors.red,
+      icon: Icons.home,
+    ),
+    ScreenWithTab(
+      page: Container(),
+      title: 'Categories',
+      color: Colors.purple,
+      icon: Icons.category,
+    ),
+    ScreenWithTab(
+      page: Container(),
+      title: 'Favorite',
+      color: Colors.teal,
+      icon: Icons.favorite,
+    ),
+  ];
 
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  PageController _pageController;
   int _currentPage = 0;
-
-  @override
-  void initState() {
-    _pageController = PageController(
-      initialPage: 0,
-      keepPage: false,
-      viewportFraction: 1.0,
-    );
-    super.initState();
-  }
 
   void _changePage(int page) {
     setState(() => _currentPage = page);
-    _pageController.jumpToPage(page);
-  }
-
-  List<Widget> _buildPageViewScreens() {
-    return widget._titles.mapIndexed((index, title) {
-      return Container(
-        color: widget._colors[index],
-        child: Center(child: Text(title)),
-      );
-    }).toList();
   }
 
   List<BubbleBottomNavigationBarItem> _buildBottomNavigationTabs() {
-    return widget._titles.mapIndexed((index, title) {
+    return widget.screens.mapIndexed((index, screen) {
       return BubbleBottomNavigationBarItem(
-        title: Text(title),
-        icon: Icon(widget._icons[index], color: widget._colors[index]),
-        activeIcon: Icon(widget._icons[index], color: widget._colors[index]),
-        backgroundColor: widget._colors[index],
+        title: Text(screen.title),
+        icon: Icon(screen.icon, color: screen.color),
+        activeIcon: Icon(screen.icon, color: screen.color),
+        backgroundColor: screen.color,
       );
     }).toList();
   }
@@ -76,12 +77,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          physics: BouncingScrollPhysics(),
-          onPageChanged: (page) => setState(() => _currentPage = page),
-          children: _buildPageViewScreens(),
-        ),
+        child: widget.screens[_currentPage].page,
       ),
       bottomNavigationBar: BubbleBottomNavigationBar(
         hasNotch: true,

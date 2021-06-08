@@ -29,6 +29,7 @@ dependencies:
   sqflite: ^2.0.0+3
   path: ^1.8.0
   youtube_player_flutter: ^8.0.0
+  json_annotation: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -40,6 +41,8 @@ dev_dependencies:
     sdk: flutter
 
   flutter_launcher_icons: "^0.9.0"
+  build_runner: ^1.0.0
+  json_serializable: ^3.0.0
 
 flutter_icons:
   android: true
@@ -69,7 +72,8 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
 
   assets:
-    - assets/images/
+    - assets/
+    - assets/json/
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
