@@ -1,0 +1,12 @@
+export './belongs_to_collection.dart';
+export './cast.dart';
+export './credit.dart';
+export './dates.dart';
+export './enum.dart';
+export './genre.dart';
+export './movie.dart';
+export './production_company.dart';
+export './production_country.dart';
+export './result.dart';
+export './spoken_language.dart';
+export './videos.dart';
