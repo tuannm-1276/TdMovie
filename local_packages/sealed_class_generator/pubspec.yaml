@@ -1,0 +1,27 @@
+name: sealed_class_generator
+description: Sealed Class generator parses and generates your sealed classes.
+version: 3.0.0
+homepage: https://github.com/vrtdev/sealed_class_generator
+repository: https://github.com/vrtdev/sealed_class_generator
+issue_tracker: https://github.com/vrtdev/sealed_class_generator/issues
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  analyzer: ^0.40.1
+  build: ^1.2.1
+  source_gen: ^0.9.4+6
+  sealed_class:
+    path: ../sealed_class
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  build_test: ^0.10.9+1
+  build_runner: ^1.7.1
+
+dependency_overrides:
+  sealed_class:
+    path: ../sealed_class/

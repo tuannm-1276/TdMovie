@@ -6,17 +6,15 @@ class MovieItem extends StatelessWidget {
   const MovieItem({
     Key key,
     @required this.movie,
-    this.onTap,
   }) : super(key: key);
 
   final Movie movie;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200,
-      height: 400,
+      width: 150,
+      height: 300,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

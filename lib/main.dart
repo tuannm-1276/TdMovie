@@ -1,30 +1,29 @@
-import 'package:flutter/cupertino.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:td_movie/blocs/blocs.dart';
+import 'package:td_movie/platform/repositories/movie_repository.dart';
+import 'package:td_movie/platform/services/api/api.dart';
 import 'package:td_movie/ui/components/bubble_bottom_navigation/bubble_bottom_navigation.dart';
 
 import 'extension/iterable_ext.dart';
 import 'ui/components/common/screen_with_tab.dart';
 import 'ui/screen/home/home_page.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: '.env');
+  Bloc.observer = MovieBlocObserver();
   runApp(App());
 }
 
 class App extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       debugShowCheckedModeBanner: false,
-      home: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(statusBarColor: Colors.black),
-        child: MainPage(),
-      ),
+      home: MainPage(),
     );
   }
 }
@@ -32,7 +31,18 @@ class App extends StatelessWidget {
 class MainPage extends StatefulWidget {
   final screens = <ScreenWithTab>[
     ScreenWithTab(
-      page: HomePage(),
+      page: BlocProvider(
+        create: (context) {
+          return HomeBloc(
+            movieRepository: MovieRepository(
+              api: Api(
+                dio: Dio(),
+              ),
+            ),
+          )..add(HomeLoaded());
+        },
+        child: HomePage(),
+      ),
       title: 'Home',
       color: Colors.red,
       icon: Icons.home,
@@ -76,14 +86,16 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: widget.screens[_currentPage].page,
+      body: IndexedStack(
+        index: _currentPage,
+        children: widget.screens.map((e) => e.page).toList(),
       ),
       bottomNavigationBar: BubbleBottomNavigationBar(
         hasNotch: true,
         opacity: .2,
         currentIndex: _currentPage,
         onTap: _changePage,
+        backgroundColor: Colors.black.withOpacity(0.7),
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         elevation: 8,
         animationDuration: Duration(milliseconds: 300),

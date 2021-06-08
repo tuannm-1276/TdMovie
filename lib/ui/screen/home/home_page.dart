@@ -1,72 +1,79 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:td_movie/blocs/blocs.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
 
-import 'home_provider.dart';
 import 'home_view_model.dart';
 
 class HomePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _HomeState();
+  State<StatefulWidget> createState() => _HomePageState();
 }
 
-class _HomeState extends State<HomePage> {
-  HomeProvider _provider;
-  Future<List<HomeViewModel>> _movieListFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _provider = HomeProvider();
-    _movieListFuture = _provider.getData();
-  }
-
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        color: Colors.black,
-        child: FutureBuilder(
-          future: _movieListFuture,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<HomeViewModel>> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                padding: EdgeInsets.only(top: 16),
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, row) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                    child: _buildHomePageRow(snapshot.data[row]),
-                  );
-                },
-              );
-            }
-
-            if (snapshot.hasError) {
-              print("Error: ${snapshot.error}");
-              return Center(
-                child: Icon(
-                  Icons.error,
-                  color: Colors.red,
-                  size: 80.0,
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return state.switchResult(
+          onHomeLoadSuccess: (successState) {
+            return Container(
+              color: Colors.black,
+              child: SafeArea(
+                child: ListView.builder(
+                  padding: EdgeInsets.only(top: 4),
+                  itemCount: successState.data.length,
+                  itemBuilder: (context, row) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                      child: _buildHomePageRow(successState.data[row]),
+                    );
+                  },
                 ),
-              );
-            }
-
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16.0),
-                  Text("Loading at the moment, please hold the line."),
-                ],
               ),
             );
           },
-        ),
-      ),
+          onHomeLoadFailure: (failState) {
+            return Container(
+              color: Colors.black,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error,
+                      color: Colors.red,
+                      size: 80.0,
+                    ),
+                    SizedBox(height: 16.0),
+                    Text('${failState.error.toString()}'),
+                  ],
+                ),
+              ),
+            );
+          },
+          onHomeLoadInProgress: (loadingState) {
+            return Container(
+              color: Colors.black,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16.0),
+                    Text(
+                      'Loading at the moment, please hold the line.',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -104,7 +111,7 @@ class _HomeState extends State<HomePage> {
           padding: EdgeInsets.only(left: 16),
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: 400,
+              maxHeight: 300,
             ),
             child: ListView.builder(
               itemCount: model.items.length,
@@ -113,14 +120,15 @@ class _HomeState extends State<HomePage> {
               physics: ClampingScrollPhysics(),
               itemBuilder: (innerContext, column) {
                 final movie = model.items[column];
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: MovieItem(
-                    movie: movie,
-                    onTap: () {
-                      print('Tapped: ${movie.title}');
-                    },
+                return InkWell(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: MovieItem(movie: movie),
                   ),
+                  onTap: () {
+                    ScaffoldMessenger.of(innerContext)
+                        .showSnackBar(SnackBar(content: Text(movie.title)));
+                  },
                 );
               },
             ),

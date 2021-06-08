@@ -29,9 +29,11 @@ enum Department {
 
 enum OriginalLanguage {
   @JsonValue('en')
-  EN,
+  ENGLISH,
   @JsonValue('ja')
-  JA
+  JAPANESE,
+  @JsonValue('ko')
+  KOREAN,
 }
 
 enum Iso31661 {

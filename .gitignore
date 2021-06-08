@@ -121,3 +121,4 @@ fastlane
 *.dSYM.zip
 *.ipa
 gkc_*
+*.env
