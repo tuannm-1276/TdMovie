@@ -1,0 +1,13 @@
+name: sealed_class
+description: Make a sealed class hierarchy
+version: 3.0.0
+homepage: https://github.com/vrtdev/sealed_class_generator
+repository: https://github.com/vrtdev/sealed_class_generator
+issue_tracker: https://github.com/vrtdev/sealed_class_generator/issues
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

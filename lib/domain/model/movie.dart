@@ -18,7 +18,7 @@ class Movie {
   @JsonKey(name: 'imdb_id')
   String imdbId;
   @JsonKey(name: 'original_language')
-  OriginalLanguage originalLanguage;
+  String originalLanguage;
   @JsonKey(name: 'original_title')
   String originalTitle;
   String overview;
