@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:td_movie/blocs/blocs.dart';
+import 'package:td_movie/domain/model/models.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
+import 'package:td_movie/ui/screen/detail/detail_page.dart';
 
 import 'home_view_model.dart';
 
@@ -126,8 +128,7 @@ class _HomePageState extends State<HomePage> {
                     child: MovieItem(movie: movie),
                   ),
                   onTap: () {
-                    ScaffoldMessenger.of(innerContext)
-                        .showSnackBar(SnackBar(content: Text(movie.title)));
+                    Navigator.of(innerContext).push(_navigateToDetail(movie));
                   },
                 );
               },
@@ -135,6 +136,23 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ],
+    );
+  }
+
+  Route _navigateToDetail(Movie movie) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          DetailPage(movie: movie),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final begin = Offset(1.0, 0.0);
+        final end = Offset.zero;
+        final curveTween = CurveTween(curve: Curves.ease);
+        final tween = Tween(begin: begin, end: end).chain(curveTween);
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 }

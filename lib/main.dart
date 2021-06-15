@@ -1,11 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:td_movie/blocs/blocs.dart';
+import 'package:td_movie/di/injection.dart';
 import 'package:td_movie/platform/repositories/movie_repository.dart';
-import 'package:td_movie/platform/services/api/api.dart';
 import 'package:td_movie/ui/components/bubble_bottom_navigation/bubble_bottom_navigation.dart';
 
 import 'extension/iterable_ext.dart';
@@ -14,6 +13,7 @@ import 'ui/screen/home/home_page.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
+  await configureDependencies();
   Bloc.observer = MovieBlocObserver();
   runApp(App());
 }
@@ -29,16 +29,18 @@ class App extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  final screens = <ScreenWithTab>[
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  int _currentPage = 0;
+  final _screens = [
     ScreenWithTab(
       page: BlocProvider(
         create: (context) {
           return HomeBloc(
-            movieRepository: MovieRepository(
-              api: Api(
-                dio: Dio(),
-              ),
-            ),
+            movieRepository: getIt.get<MovieRepository>(),
           )..add(HomeLoaded());
         },
         child: HomePage(),
@@ -61,19 +63,12 @@ class MainPage extends StatefulWidget {
     ),
   ];
 
-  @override
-  _MainPageState createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  int _currentPage = 0;
-
   void _changePage(int page) {
     setState(() => _currentPage = page);
   }
 
   List<BubbleBottomNavigationBarItem> _buildBottomNavigationTabs() {
-    return widget.screens.mapIndexed((index, screen) {
+    return _screens.mapIndexed((index, screen) {
       return BubbleBottomNavigationBarItem(
         title: Text(screen.title),
         icon: Icon(screen.icon, color: screen.color),
@@ -88,7 +83,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: IndexedStack(
         index: _currentPage,
-        children: widget.screens.map((e) => e.page).toList(),
+        children: _screens.map((e) => e.page).toList(),
       ),
       bottomNavigationBar: BubbleBottomNavigationBar(
         hasNotch: true,
