@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:td_movie/domain/model/models.dart';
 import 'package:td_movie/platform/services/api/api.dart';
 import 'package:td_movie/ui/screen/home/home_view_model.dart';
 
@@ -20,4 +21,9 @@ class MovieRepository {
     final movies = await api.getMovies(headerTitle);
     return HomeViewModel(headerTitle: headerTitle, items: movies);
   }
+
+  Future<Movie> getMovieDetail(int id) async => await api.getMovieDetail(id);
+
+  Future<Credits> getMovieCredits(int id) async =>
+      await api.getMovieCredits(id);
 }

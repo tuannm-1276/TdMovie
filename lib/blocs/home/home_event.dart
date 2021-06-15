@@ -7,7 +7,7 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 
   @override
-  String toString()  => runtimeType.toString();
+  String toString() => runtimeType.toString();
 }
 
 class HomeLoaded extends HomeEvent {}

@@ -6,11 +6,13 @@ part 'credit.g.dart';
 
 @JsonSerializable()
 class Credits {
+  int id;
   @JsonKey(name: 'cast')
   List<Cast> casts;
   List<Cast> crew;
 
   Credits({
+    this.id,
     this.casts,
     this.crew,
   });
