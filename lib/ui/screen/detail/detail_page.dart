@@ -1,44 +1,88 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:td_movie/blocs/blocs.dart';
 import 'package:td_movie/domain/model/models.dart';
 import 'package:td_movie/platform/services/api/urls.dart';
 import 'package:td_movie/ui/components/rating_bar_indicator.dart';
+import 'package:td_movie/ui/components/collapsed_appbar_title.dart';
 import 'package:td_movie/ui/screen/detail/cast_item.dart';
 import 'package:td_movie/ui/screen/detail/company_item.dart';
-import 'package:td_movie/ui/screen/detail/detail_provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:td_movie/extension//build_context_ext.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage({@required this.movie});
-
-  final Movie movie;
-
   @override
   _DetailPageState createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
-  final _detailProvider = DetailProvider();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.black,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              // Backdrop Image
-              _buildBackdropImage(
-                  '${Urls.originalImagePath}${widget.movie.backdropPath}'),
-              // Color Filter
-              _buildColorFilter(),
-              // Content
-              _buildContent(widget.movie),
-            ],
-          ),
-        ),
+      body: BlocBuilder<DetailBloc, DetailState>(
+        builder: (context, state) {
+          return state.switchResult(
+            onDetailLoadSuccess: (successState) {
+              final movie =
+                  successState.movie.copyWith(credits: successState.credits);
+              return Container(
+                color: Colors.black,
+                child: SafeArea(
+                  child: Stack(
+                    children: [
+                      // Backdrop Image
+                      _buildBackdropImage(
+                          '${Urls.originalImagePath}${movie.backdropPath}'),
+                      // Color Filter
+                      _buildColorFilter(),
+                      // Content
+                      _buildContent(movie),
+                    ],
+                  ),
+                ),
+              );
+            },
+            onDetailLoadFailure: (failState) {
+              return Container(
+                color: Colors.black,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error,
+                        color: Colors.red,
+                        size: 80.0,
+                      ),
+                      SizedBox(height: 16.0),
+                      Text('${failState.error.toString()}'),
+                    ],
+                  ),
+                ),
+              );
+            },
+            onDetailLoadInProgress: (loadingState) {
+              return Container(
+                color: Colors.black,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16.0),
+                      Text(
+                        'Loading at the moment, please hold the line.',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -74,45 +118,71 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _buildContent(Movie movie) {
-    final width = MediaQuery.of(context).size.width * 4.5 / 7;
     final height = MediaQuery.of(context).size.height * 3.5 / 7 - 56;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(left: 12, top: 4, right: 12),
-        child: Column(
-          children: [
-            Align(
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return [
+          SliverAppBar(
+            backgroundColor: Colors.black,
+            expandedHeight: height * 1.5,
+            floating: false,
+            pinned: true,
+            leading: Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: EdgeInsets.only(
                   top: 4,
+                  left: 8,
                   bottom: 8,
                 ),
                 child: _buildBackButton(),
               ),
             ),
-            _buildPosterImage(
-              '${Urls.originalImagePath}${movie.posterPath}',
-              height: height,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: CollapsedAppBarTitle(child: Text(movie.title)),
+              background: Stack(
+                children: [
+                  _buildBackdropImage(
+                      '${Urls.originalImagePath}${movie.backdropPath}'),
+                  _buildColorFilter(),
+                  Center(
+                    child: _buildPosterImage(
+                      '${Urls.originalImagePath}${movie.posterPath}',
+                      height: height,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 8),
-            _buildMovieTitle(movie.title, width: width),
-            SizedBox(height: 8),
-            _buildVoteAverage(movie.voteAverage),
-            SizedBox(height: 8),
-            _buildVoteRatingBar(movie.voteAverage),
-            SizedBox(height: 16),
-            _buildCommonInformation(movie),
-            SizedBox(height: 16),
-            _buildGenres(_detailProvider.getGenres()),
-            SizedBox(height: 16),
-            _buildOverview(movie.overview),
-            SizedBox(height: 16),
-            _buildCasts(_detailProvider.getCasts()),
-            SizedBox(height: 16),
-            _buildProductionCompanies(_detailProvider.getProductionCompanies()),
-            SizedBox(height: 16),
-          ],
+          ),
+        ];
+      },
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(left: 12, right: 12),
+          child: Column(
+            children: [
+              _buildMovieTitle(movie.title),
+              SizedBox(
+                height: 8,
+              ),
+              _buildVoteAverage(movie.voteAverage),
+              SizedBox(height: 8),
+              _buildVoteRatingBar(movie.voteAverage),
+              SizedBox(height: 16),
+              _buildCommonInformation(movie),
+              SizedBox(height: 16),
+              _buildGenres(movie.genres),
+              SizedBox(height: 16),
+              _buildOverview(movie.overview),
+              SizedBox(height: 16),
+              _buildCasts(movie.credits.casts),
+              SizedBox(height: 16),
+              _buildProductionCompanies(movie.productionCompanies),
+              SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -144,37 +214,37 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildPosterImage(String imagePath, {double height}) {
     return SizedBox(
-      height: height,
-      width: height * 2 / 3,
+      height: height * 1.4,
+      width: height * 1.2 * 2 / 3,
       child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(imagePath),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+          color: Colors.transparent,
+        ),
         foregroundDecoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(color: Colors.black),
           ),
         ),
-        child: FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: imagePath,
-          fit: BoxFit.cover,
-        ),
       ),
     );
   }
 
-  Widget _buildMovieTitle(String title, {double width}) {
-    return SizedBox(
-      width: width,
-      child: Center(
-        child: Text(
-          widget.movie.title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
+  Widget _buildMovieTitle(String title) {
+    return Center(
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
         ),
+        textAlign: TextAlign.center,
       ),
     );
   }
@@ -367,6 +437,7 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _buildCasts(List<Cast> casts) {
+    final data = casts ?? [];
     return Column(
       children: [
         Align(
@@ -383,15 +454,15 @@ class _DetailPageState extends State<DetailPage> {
         SizedBox(height: 8),
         ConstrainedBox(
           constraints: BoxConstraints(
-            maxHeight: 150,
+            maxHeight: 200,
           ),
           child: ListView.builder(
-            itemCount: casts.length,
+            itemCount: data.length,
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             physics: ClampingScrollPhysics(),
             itemBuilder: (innerContext, index) {
-              final cast = casts[index];
+              final cast = data[index];
               return InkWell(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),

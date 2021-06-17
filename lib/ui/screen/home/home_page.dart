@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:td_movie/blocs/blocs.dart';
+import 'package:td_movie/di/injection.dart';
 import 'package:td_movie/domain/model/models.dart';
+import 'package:td_movie/platform/repositories/movie_repository.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
 import 'package:td_movie/ui/screen/detail/detail_page.dart';
 
@@ -141,8 +143,13 @@ class _HomePageState extends State<HomePage> {
 
   Route _navigateToDetail(Movie movie) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          DetailPage(movie: movie),
+      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
+        create: (context) {
+          return DetailBloc(movieRepository: getIt.get<MovieRepository>())
+            ..add(DetailLoaded(movie.id));
+        },
+        child: DetailPage(),
+      ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         final begin = Offset(1.0, 0.0);
         final end = Offset.zero;

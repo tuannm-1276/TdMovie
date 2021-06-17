@@ -13,30 +13,45 @@ class CastItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 150,
-      width: 80,
+      height: 200,
+      width: 100,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
             height: 120,
-            width: 80,
+            width: 100,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                '${Urls.originalImagePath}${cast.profilePath}',
-                fit: BoxFit.cover,
-              ),
+              child: (cast.profilePath != null)
+                  ? Image.network(
+                      '${Urls.originalImagePath}${cast.profilePath}',
+                      fit: BoxFit.cover,
+                    )
+                  : Image(
+                      image: AssetImage(
+                        (cast.gender == 1)
+                            ? 'assets/images/default_profile_f.jpg'
+                            : 'assets/images/default_profile_m.jpg',
+                      ),
+                    ),
             ),
           ),
           SizedBox(height: 8),
           Text(
             cast.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 4),
+          Text(
+            cast.character,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
               fontSize: 12,
             ),
             textAlign: TextAlign.center,

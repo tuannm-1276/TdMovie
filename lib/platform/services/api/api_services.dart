@@ -24,4 +24,16 @@ class Api {
     final movies = MovieList.fromJson(response.data).movies;
     return movies;
   }
+
+  Future<Movie> getMovieDetail(int id) async {
+    final response = await dio.get('${Urls.movieUrl}/$id');
+    final movie = Movie.fromJson(response.data);
+    return movie;
+  }
+
+  Future<Credits> getMovieCredits(int id) async {
+    final response = await dio.get('${Urls.movieUrl}/$id/credits');
+    final credits = Credits.fromJson(response.data);
+    return credits;
+  }
 }
