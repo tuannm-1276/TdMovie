@@ -22,6 +22,9 @@ class MovieRepository {
     return HomeViewModel(headerTitle: headerTitle, items: movies);
   }
 
+  Future<List<Movie>> getMoviesByType(String type, [int page = 1]) async =>
+      await api.getMovies(type, page);
+
   Future<Movie> getMovieDetail(int id) async => await api.getMovieDetail(id);
 
   Future<Credits> getMovieCredits(int id) async =>
