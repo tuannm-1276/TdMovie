@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:td_movie/domain/model/genres.dart';
 import 'package:td_movie/domain/model/models.dart';
 import 'package:td_movie/extension/string_ext.dart';
 import 'package:td_movie/platform/services/api/response/movie_list.dart';
@@ -35,5 +36,11 @@ class Api {
     final response = await dio.get('${Urls.movieUrl}/$id/credits');
     final credits = Credits.fromJson(response.data);
     return credits;
+  }
+
+  Future<List<Genre>> getGenres() async {
+    final response = await dio.get('${Urls.genresListPath}');
+    final genres = Genres.fromJson(response.data).genres;
+    return genres;
   }
 }
