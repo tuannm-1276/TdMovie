@@ -174,11 +174,23 @@ class _HomePageState extends State<HomePage> {
 
   Route _navigateToDetail(Movie movie) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
-        create: (context) {
-          return DetailBloc(movieRepository: getIt.get<MovieRepository>())
-            ..add(DetailLoaded(movie.id));
-        },
+      pageBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+      ) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) {
+              return DetailBloc(
+                movieRepository: getIt.get<MovieRepository>(),
+              )..add(DetailLoaded(movie.id));
+            },
+          ),
+          BlocProvider(
+            create: (context) => FavoriteBloc(InitState()),
+          ),
+        ],
         child: DetailPage(),
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
