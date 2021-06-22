@@ -1,14 +1,17 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:td_movie/base/base.dart';
 import 'package:td_movie/blocs/blocs.dart';
+import 'package:td_movie/blocs/favorite/blocs.dart';
 import 'package:td_movie/domain/model/models.dart';
+import 'package:td_movie/extension//build_context_ext.dart';
 import 'package:td_movie/platform/services/api/urls.dart';
-import 'package:td_movie/ui/components/rating_bar_indicator.dart';
 import 'package:td_movie/ui/components/collapsed_appbar_title.dart';
+import 'package:td_movie/ui/components/rating_bar_indicator.dart';
 import 'package:td_movie/ui/screen/detail/cast_item.dart';
 import 'package:td_movie/ui/screen/detail/company_item.dart';
-import 'package:td_movie/extension//build_context_ext.dart';
 
 class DetailPage extends StatefulWidget {
   @override
@@ -25,6 +28,8 @@ class _DetailPageState extends State<DetailPage> {
             onDetailLoadSuccess: (successState) {
               final movie =
                   successState.movie.copyWith(credits: successState.credits);
+              Provider.of<FavoriteBloc>(context, listen: false)
+                  .add(CheckFavorite(movie));
               return Container(
                 color: Colors.black,
                 child: SafeArea(
@@ -36,50 +41,17 @@ class _DetailPageState extends State<DetailPage> {
                       // Color Filter
                       _buildColorFilter(),
                       // Content
-                      _buildContent(movie),
+                      _buildContent(context, movie),
                     ],
                   ),
                 ),
               );
             },
-            onDetailLoadFailure: (failState) {
-              return Container(
-                color: Colors.black,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error,
-                        color: Colors.red,
-                        size: 80.0,
-                      ),
-                      SizedBox(height: 16.0),
-                      Text('${failState.error.toString()}'),
-                    ],
-                  ),
-                ),
-              );
+            onDetailLoadFailure: (state) {
+              return _getFailureContainer(state);
             },
-            onDetailLoadInProgress: (loadingState) {
-              return Container(
-                color: Colors.black,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16.0),
-                      Text(
-                        'Loading at the moment, please hold the line.',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+            onDetailLoadInProgress: (state) {
+              return _getInProgressContainer(state);
             },
           );
         },
@@ -117,7 +89,7 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _buildContent(Movie movie) {
+  Widget _buildContent(BuildContext context, Movie movie) {
     final height = MediaQuery.of(context).size.height * 3.5 / 7 - 56;
     return NestedScrollView(
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -135,7 +107,7 @@ class _DetailPageState extends State<DetailPage> {
                   left: 8,
                   bottom: 8,
                 ),
-                child: _buildBackButton(),
+                child: _buildBackButton(context),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
@@ -164,12 +136,8 @@ class _DetailPageState extends State<DetailPage> {
           child: Column(
             children: [
               _buildMovieTitle(movie.title),
-              SizedBox(
-                height: 8,
-              ),
-              _buildVoteAverage(movie.voteAverage),
               SizedBox(height: 8),
-              _buildVoteRatingBar(movie.voteAverage),
+              _buildFavoriteAndVote(context, movie),
               SizedBox(height: 16),
               _buildCommonInformation(movie),
               SizedBox(height: 16),
@@ -177,9 +145,9 @@ class _DetailPageState extends State<DetailPage> {
               SizedBox(height: 16),
               _buildOverview(movie.overview),
               SizedBox(height: 16),
-              _buildCasts(movie.credits.casts),
+              _buildCasts(context, movie.credits.casts),
               SizedBox(height: 16),
-              _buildProductionCompanies(movie.productionCompanies),
+              _buildProductionCompanies(context, movie.productionCompanies),
               SizedBox(height: 16),
             ],
           ),
@@ -188,7 +156,7 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _buildBackButton() {
+  Widget _buildBackButton(BuildContext context) {
     return SizedBox(
       width: 40,
       height: 40,
@@ -246,6 +214,53 @@ class _DetailPageState extends State<DetailPage> {
         ),
         textAlign: TextAlign.center,
       ),
+    );
+  }
+
+  /*Favorite Button and VoteAverage*/
+  Widget _buildFavoriteAndVote(BuildContext context, Movie movie) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildFavoriteIcon(context, movie),
+        Column(
+          children: [
+            _buildVoteAverage(movie.voteAverage),
+            SizedBox(height: 8),
+            _buildVoteRatingBar(movie.voteAverage),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFavoriteIcon(BuildContext context, Movie movie) {
+    return GestureDetector(
+      child: BlocBuilder<FavoriteBloc, BaseState>(
+        buildWhen: (previous, current) {
+          return current is FavoriteState || current is NormalState;
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: EdgeInsets.all(8.0),
+            child: state is FavoriteState
+                ? Icon(
+                    Icons.favorite,
+                    color: Colors.pinkAccent,
+                  )
+                : Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
+          );
+        },
+      ),
+      onTap: () {
+        Provider.of<FavoriteBloc>(context, listen: false).add(
+          ClickedFavorite(movie),
+        );
+      },
     );
   }
 
@@ -436,7 +451,7 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _buildCasts(List<Cast> casts) {
+  Widget _buildCasts(BuildContext context, List<Cast> casts) {
     final data = casts ?? [];
     return Column(
       children: [
@@ -483,7 +498,8 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _buildProductionCompanies(List<ProductionCompany> companies) {
+  Widget _buildProductionCompanies(
+      BuildContext context, List<ProductionCompany> companies) {
     return Column(
       children: [
         Align(
@@ -527,4 +543,44 @@ class _DetailPageState extends State<DetailPage> {
       ],
     );
   }
+}
+
+Widget _getFailureContainer(DetailLoadFailure state) {
+  return Container(
+    color: Colors.black,
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error,
+            color: Colors.red,
+            size: 80.0,
+          ),
+          SizedBox(height: 16.0),
+          Text('${state.error.toString()}'),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _getInProgressContainer(DetailLoadInProgress state) {
+  return Container(
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16.0),
+          Text(
+            'Loading at the moment, please hold the line.',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
