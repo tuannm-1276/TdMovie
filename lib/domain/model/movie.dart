@@ -138,4 +138,13 @@ class Movie {
         videos: videos ?? this.videos,
         credits: credits ?? this.credits,
       );
+
+  Map<String, Object> toMap() {
+    return Map<String, dynamic>()
+      ..["id"] = id
+      ..["poster_path"] = posterPath
+      ..["title"] = title
+      ..["release_date"] = releaseDate.toUtc().millisecondsSinceEpoch
+      ..["vote_average"] = voteAverage;
+  }
 }

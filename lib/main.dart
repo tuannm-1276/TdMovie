@@ -6,6 +6,7 @@ import 'package:td_movie/blocs/blocs.dart';
 import 'package:td_movie/di/injection.dart';
 import 'package:td_movie/platform/repositories/movie_repository.dart';
 import 'package:td_movie/ui/components/bubble_bottom_navigation/bubble_bottom_navigation.dart';
+import 'package:td_movie/ui/screen/favorite/favorite_screen.dart';
 import 'package:td_movie/ui/screen/genres/genres_page.dart';
 
 import 'extension/iterable_ext.dart';
@@ -57,7 +58,7 @@ class _MainPageState extends State<MainPage> {
       icon: Icons.category,
     ),
     ScreenWithTab(
-      page: Container(),
+      page: FavoriteScreen(),
       title: 'Favorite',
       color: Colors.teal,
       icon: Icons.favorite,
