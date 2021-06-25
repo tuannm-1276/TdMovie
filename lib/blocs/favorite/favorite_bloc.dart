@@ -17,11 +17,9 @@ class FavoriteBloc extends Bloc<BaseEvent, BaseState> {
         final result = await repository.isFavorite(event.movie);
         if (result == true) {
           await repository.deleteFavorite(event.movie);
-          print('UN FAVORITE');
           yield (NormalState());
         } else if (result == false) {
           await repository.addFavorite(event.movie);
-          print('FAVORITE');
           yield (FavoriteState());
         }
       } catch (e) {

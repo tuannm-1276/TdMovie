@@ -9,4 +9,7 @@ class Urls {
 
   // genres
   static const genresListPath = '$_baseUrl/genre/movie/list';
+
+  // movies by genre
+  static const moviesByGenresPath = '$_baseUrl/discover/movie';
 }

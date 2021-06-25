@@ -4,6 +4,8 @@ import 'package:td_movie/base/base.dart';
 import 'package:td_movie/blocs/favorite/blocs.dart';
 import 'package:td_movie/domain/model/movie.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
+import 'package:td_movie/ui/components/common/progress_loading.dart';
+import 'package:td_movie/ui/components/common/route_to_detail.dart';
 
 class FavoriteScreen extends StatelessWidget {
   @override
@@ -23,8 +25,17 @@ class FavoriteScreen extends StatelessWidget {
                   mainAxisSpacing: 12.0,
                   childAspectRatio: (1 / 2),
                   crossAxisCount: 2,
-                  children: List.generate(movies.length,
-                      (index) => MovieItem(movie: movies[index])),
+                  children: List.generate(
+                    movies.length,
+                    (index) => GestureDetector(
+                      child: MovieItem(movie: movies[index]),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          navigateToDetail(movies[index]),
+                        );
+                      },
+                    ),
+                  ),
                 );
               }
               return Center(
@@ -35,31 +46,6 @@ class FavoriteScreen extends StatelessWidget {
             },
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ProgressLoading extends StatelessWidget {
-  final double size;
-  final Color valueColor;
-  final double strokeWidth;
-
-  const ProgressLoading({
-    Key key,
-    this.size = 16,
-    this.valueColor = Colors.black,
-    this.strokeWidth = 2,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(valueColor),
-        strokeWidth: strokeWidth,
       ),
     );
   }

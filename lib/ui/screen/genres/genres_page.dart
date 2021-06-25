@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:td_movie/base/base.dart';
 import 'package:td_movie/blocs/genres/genres_bloc.dart';
+import 'package:td_movie/blocs/movies_by_genre/blocs.dart';
 import 'package:td_movie/platform/repositories/genres_repository.dart';
+import 'package:td_movie/platform/repositories/movie_repository.dart';
+import 'package:td_movie/ui/components/common/route_to_detail.dart';
+import 'package:td_movie/ui/screen/genres/movies_by_genre_page.dart';
 
 import '../../../di/injection.dart';
 import '../../../domain/model/genre.dart';
@@ -164,7 +169,9 @@ class _Tile extends StatelessWidget {
       elevation: 0,
       color: backgroundColor,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).push(navigateToMoviesByGenre(genre));
+        },
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(4),
@@ -225,5 +232,23 @@ Widget _getInProgressContainer(GenresLoadInProgress state) {
         ],
       ),
     ),
+  );
+}
+
+Route navigateToMoviesByGenre(Genre genre) {
+  return PageRouteBuilder(
+    pageBuilder: (
+      context,
+      animation,
+      secondaryAnimation,
+    ) => BlocProvider(
+      create: (context) =>
+          MoviesByGenreBloc(getIt.get<MovieRepository>())..add(GetMoviesByGenre(genre)),
+      child: MoivesByGenrePage(genre),
+    ),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return buildCommonTransitions(
+          context, animation, secondaryAnimation, child);
+    },
   );
 }
