@@ -9,7 +9,7 @@ class GenresRepository{
 
   final Api api;
 
-  Future<List<Genre>> getGenres() async {
+  Future<List<Genre>> getGenres() {
     return api.getGenres();
   }
 }

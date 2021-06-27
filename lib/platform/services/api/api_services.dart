@@ -43,4 +43,13 @@ class Api {
     final genres = Genres.fromJson(response.data).genres;
     return genres;
   }
+
+  Future<List<Movie>> getMoviesByGenre(int genreId, {int page = 1}) async {
+    final response = await dio.get(
+      Urls.moviesByGenresPath,
+      queryParameters: {'with_genres': genreId, 'page': page},
+    );
+    final movies = MovieList.fromJson(response.data).movies;
+    return movies;
+  }
 }

@@ -56,7 +56,7 @@ class MovieItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '(${movie.releaseDate.year})',
+                        '(${getYearOfMovie(movie)})',
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.5),
                         ),
@@ -88,4 +88,10 @@ class MovieItem extends StatelessWidget {
       ),
     );
   }
+}
+
+String getYearOfMovie(Movie movie) {
+  return movie.releaseDate?.year != null
+      ? movie.releaseDate.year.toString()
+      : 'Unknown';
 }
