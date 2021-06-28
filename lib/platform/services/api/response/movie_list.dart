@@ -5,6 +5,7 @@ part 'movie_list.g.dart';
 
 @JsonSerializable()
 class MovieList {
+  int genreId;
   Dates dates;
   int page;
   @JsonKey(name: 'results')
@@ -14,8 +15,14 @@ class MovieList {
   @JsonKey(name: 'total_results')
   int totalResults;
 
-  MovieList(
-      {this.dates, this.page, this.movies, this.totalPages, this.totalResults});
+  MovieList({
+    this.genreId,
+    this.dates,
+    this.page,
+    this.movies,
+    this.totalPages,
+    this.totalResults,
+  });
 
   factory MovieList.fromJson(Map<String, dynamic> json) =>
       _$MovieListFromJson(json);

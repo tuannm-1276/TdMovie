@@ -242,9 +242,11 @@ Route navigateToMoviesByGenre(Genre genre) {
       animation,
       secondaryAnimation,
     ) => BlocProvider(
-      create: (context) =>
-          MoviesByGenreBloc(getIt.get<MovieRepository>())..add(GetMoviesByGenre(genre)),
-      child: MoivesByGenrePage(genre),
+      create: (context) => MoviesByGenreBloc(getIt.get<MovieRepository>())
+        ..add(GetMoviesByGenre(genre)),
+      child: MoviesByGenrePage(
+        genre: genre,
+      ),
     ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return buildCommonTransitions(

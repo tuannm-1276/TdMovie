@@ -27,6 +27,6 @@ class MovieRepository {
   Future<Credits> getMovieCredits(int id) async =>
       await api.getMovieCredits(id);
 
-  Future<List<Movie>> getMoviesByGenre(int genreId, {int page = 1}) =>
-      api.getMoviesByGenre(genreId, page: page);
+  Future<MovieList> getMovieListByGenre(int genreId, {int page = 1}) =>
+      api.getMovieListByGenre(genreId, page: page);
 }
