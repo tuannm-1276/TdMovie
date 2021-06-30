@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:td_movie/base/base.dart';
 import 'package:td_movie/blocs/movies_by_genre/blocs.dart';
 import 'package:td_movie/platform/repositories/movie_repository.dart';
+import 'package:td_movie/platform/services/api/api.dart';
 
 class MoviesByGenreBloc extends Bloc<BaseEvent, BaseState> {
   final MovieRepository movieRepository;
@@ -14,8 +15,9 @@ class MoviesByGenreBloc extends Bloc<BaseEvent, BaseState> {
     if (event is GetMoviesByGenre) {
       try {
         yield LoadingState();
-        final movies = await movieRepository.getMoviesByGenre(event.genre.id);
-        yield LoadedState(data: movies);
+        final movieList =
+            await movieRepository.getMovieListByGenre(event.genre.id);
+        yield LoadedState(data: movieList);
       } catch (e) {
         yield (ErrorState(data: e.toString()));
       }
@@ -23,9 +25,15 @@ class MoviesByGenreBloc extends Bloc<BaseEvent, BaseState> {
 
     if (event is LoadMoreMoviesByGenre) {
       try {
-        //TODO
+        final movieList = (state as LoadedState<MovieList>).data;
+        final movieListMore = await movieRepository.getMovieListByGenre(
+          event.genre.id,
+          page: movieList.page + 1,
+        );
+        movieListMore.movies = movieList.movies + movieListMore.movies;
+        yield LoadedState(data: movieListMore);
       } catch (e) {
-        yield (ErrorState(data: e.toString()));
+        yield ErrorState(data: e.toString());
       }
     }
   }

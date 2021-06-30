@@ -91,7 +91,5 @@ class MovieItem extends StatelessWidget {
 }
 
 String getYearOfMovie(Movie movie) {
-  return movie.releaseDate?.year != null
-      ? movie.releaseDate.year.toString()
-      : 'Unknown';
+  return movie.releaseDate?.year?.toString() ?? 'Unknown';
 }
