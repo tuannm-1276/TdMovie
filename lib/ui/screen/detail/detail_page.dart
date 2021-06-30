@@ -12,6 +12,7 @@ import 'package:td_movie/ui/components/collapsed_appbar_title.dart';
 import 'package:td_movie/ui/components/rating_bar_indicator.dart';
 import 'package:td_movie/ui/screen/detail/cast_item.dart';
 import 'package:td_movie/ui/screen/detail/company_item.dart';
+import 'package:td_movie/ui/screen/detail/route_to_trailer_page.dart';
 
 class DetailPage extends StatefulWidget {
   @override
@@ -124,6 +125,7 @@ class _DetailPageState extends State<DetailPage> {
                       height: height,
                     ),
                   ),
+                  _buildPlayTrailerButton(movie),
                 ],
               ),
             ),
@@ -201,6 +203,27 @@ class _DetailPageState extends State<DetailPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildPlayTrailerButton(Movie movie) {
+    final videos = movie.videoList?.videos ?? [];
+    return videos.isNotEmpty
+        ? Center(
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(navigateToTrailerPage(videos));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Icon(
+                  Icons.play_circle_outline,
+                  color: Colors.white,
+                  size: 50,
+                ),
+              ),
+            ),
+          )
+        : SizedBox.shrink();
   }
 
   Widget _buildMovieTitle(String title) {
@@ -567,6 +590,7 @@ Widget _getFailureContainer(DetailLoadFailure state) {
 
 Widget _getInProgressContainer(DetailLoadInProgress state) {
   return Container(
+    color: Colors.black,
     child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

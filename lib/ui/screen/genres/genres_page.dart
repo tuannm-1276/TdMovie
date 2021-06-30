@@ -248,9 +248,16 @@ Route navigateToMoviesByGenre(Genre genre) {
         genre: genre,
       ),
     ),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return buildCommonTransitions(
-          context, animation, secondaryAnimation, child);
-    },
+    transitionsBuilder: (
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    ) => buildCommonTransitions(
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    ),
   );
 }

@@ -27,7 +27,10 @@ class Api {
   }
 
   Future<Movie> getMovieDetail(int id) async {
-    final response = await dio.get('${Urls.movieUrl}/$id');
+    final response = await dio.get(
+      '${Urls.movieUrl}/$id',
+      queryParameters: {'append_to_response': 'videos,credits'},
+    );
     final movie = Movie.fromJson(response.data);
     return movie;
   }

@@ -7,6 +7,6 @@ export './genre.dart';
 export './movie.dart';
 export './production_company.dart';
 export './production_country.dart';
-export './result.dart';
+export './video.dart';
 export './spoken_language.dart';
-export './videos.dart';
+export './video_list.dart';

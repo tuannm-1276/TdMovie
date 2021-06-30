@@ -43,7 +43,8 @@ class Movie {
   double voteAverage;
   @JsonKey(name: 'vote_count')
   int voteCount;
-  Videos videos;
+  @JsonKey(name: 'videos')
+  VideoList videoList;
   Credits credits;
 
   Movie({
@@ -72,7 +73,7 @@ class Movie {
     this.video,
     this.voteAverage,
     this.voteCount,
-    this.videos,
+    this.videoList,
     this.credits,
   });
 
@@ -106,7 +107,7 @@ class Movie {
     bool video,
     double voteAverage,
     int voteCount,
-    Videos videos,
+    VideoList videoList,
     Credits credits,
   }) =>
       Movie(
@@ -135,7 +136,7 @@ class Movie {
         video: video ?? this.video,
         voteAverage: voteAverage ?? this.voteAverage,
         voteCount: voteCount ?? this.voteCount,
-        videos: videos ?? this.videos,
+        videoList: videoList ?? this.videoList,
         credits: credits ?? this.credits,
       );
 
