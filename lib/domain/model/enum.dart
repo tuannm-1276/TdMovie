@@ -25,6 +25,8 @@ enum Department {
   CREW,
   @JsonValue('Visual Effects')
   VISUAL_EFFECTS,
+  @JsonValue('Creator')
+  CREATOR,
 }
 
 enum OriginalLanguage {

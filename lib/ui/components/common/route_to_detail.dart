@@ -10,6 +10,8 @@ import 'package:td_movie/ui/screen/detail/detail_page.dart';
 
 Route navigateToDetail(Movie movie) {
   return PageRouteBuilder(
+    transitionDuration: Duration(milliseconds: 100),
+    reverseTransitionDuration: Duration(milliseconds: 100),
     pageBuilder: (
       context,
       animation,
@@ -43,7 +45,7 @@ Widget buildCommonTransitions(
 ) {
   final begin = Offset(1.0, 0.0);
   final end = Offset.zero;
-  final curveTween = CurveTween(curve: Curves.ease);
+  final curveTween = CurveTween(curve: Curves.easeOut);
   final tween = Tween(begin: begin, end: end).chain(curveTween);
   return SlideTransition(
     position: animation.drive(tween),

@@ -30,7 +30,7 @@ class Movie {
   @JsonKey(name: 'production_countries')
   List<ProductionCountry> productionCountries;
   @JsonKey(name: 'release_date')
-  DateTime releaseDate;
+  String releaseDate;
   int revenue;
   int runtime;
   @JsonKey(name: 'spoken_language')
@@ -97,7 +97,7 @@ class Movie {
     String posterPath,
     List<ProductionCompany> productionCompanies,
     List<ProductionCountry> productionCountries,
-    DateTime releaseDate,
+    String releaseDate,
     int revenue,
     int runtime,
     List<SpokenLanguage> spokenLanguages,
@@ -145,7 +145,7 @@ class Movie {
       ..["id"] = id
       ..["poster_path"] = posterPath
       ..["title"] = title
-      ..["release_date"] = releaseDate.toUtc().millisecondsSinceEpoch
+      ..["release_date"] = releaseDate
       ..["vote_average"] = voteAverage;
   }
 }

@@ -5,6 +5,8 @@ import 'package:td_movie/ui/screen/detail/trailer_page.dart';
 
 Route navigateToTrailerPage(List<Video> videos) {
   return PageRouteBuilder(
+    transitionDuration: Duration(milliseconds: 1000),
+    reverseTransitionDuration: Duration(milliseconds: 1000),
     pageBuilder: (
       context,
       animation,

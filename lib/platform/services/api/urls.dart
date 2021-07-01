@@ -5,7 +5,9 @@ class Urls {
   // Image
   static const _baseImageUrl = 'https://image.tmdb.org/t/p';
   static const originalImagePath = '$_baseImageUrl/original';
+  static const w780ImagePath = '$_baseImageUrl/w780';
   static const w500ImagePath = '$_baseImageUrl/w500';
+  static const w342ImagePath = '$_baseImageUrl/w342';
 
   // genres
   static const genresListPath = '$_baseUrl/genre/movie/list';
