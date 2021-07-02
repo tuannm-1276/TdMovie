@@ -9,10 +9,13 @@ import 'package:td_movie/domain/model/models.dart';
 import 'package:td_movie/extension//build_context_ext.dart';
 import 'package:td_movie/platform/services/api/urls.dart';
 import 'package:td_movie/ui/components/collapsed_appbar_title.dart';
+import 'package:td_movie/ui/components/common/movie_item.dart';
+import 'package:td_movie/ui/components/common/progress_loading.dart';
 import 'package:td_movie/ui/components/rating_bar_indicator.dart';
+import 'package:td_movie/ui/screen/detail/animation_favorite.dart';
+import 'package:td_movie/ui/screen/detail/animation_play_trailer.dart';
 import 'package:td_movie/ui/screen/detail/cast_item.dart';
 import 'package:td_movie/ui/screen/detail/company_item.dart';
-import 'package:td_movie/ui/screen/detail/route_to_trailer_page.dart';
 
 class DetailPage extends StatefulWidget {
   @override
@@ -117,15 +120,15 @@ class _DetailPageState extends State<DetailPage> {
               background: Stack(
                 children: [
                   _buildBackdropImage(
-                      '${Urls.originalImagePath}${movie.backdropPath}'),
+                      '${Urls.w500ImagePath}${movie.backdropPath}'),
                   _buildColorFilter(),
                   Center(
                     child: _buildPosterImage(
-                      '${Urls.originalImagePath}${movie.posterPath}',
+                      '${Urls.w500ImagePath}${movie.posterPath}',
                       height: height,
                     ),
                   ),
-                  _buildPlayTrailerButton(movie),
+                  PlayButton(movie: movie),
                 ],
               ),
             ),
@@ -205,27 +208,6 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _buildPlayTrailerButton(Movie movie) {
-    final videos = movie.videoList?.videos ?? [];
-    return videos.isNotEmpty
-        ? Center(
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).push(navigateToTrailerPage(videos));
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Icon(
-                  Icons.play_circle_outline,
-                  color: Colors.white,
-                  size: 50,
-                ),
-              ),
-            ),
-          )
-        : SizedBox.shrink();
-  }
-
   Widget _buildMovieTitle(String title) {
     return Center(
       child: Text(
@@ -259,29 +241,15 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _buildFavoriteIcon(BuildContext context, Movie movie) {
-    return GestureDetector(
-      child: BlocBuilder<FavoriteBloc, BaseState>(
-        buildWhen: (previous, current) {
-          return current is FavoriteState || current is NormalState;
-        },
-        builder: (context, state) {
-          return Padding(
-            padding: EdgeInsets.all(8.0),
-            child: state is FavoriteState
-                ? Icon(
-                    Icons.favorite,
-                    color: Colors.pinkAccent,
-                  )
-                : Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-          );
-        },
-      ),
-      onTap: () {
-        Provider.of<FavoriteBloc>(context, listen: false).add(
-          ClickedFavorite(movie),
+    return BlocBuilder<FavoriteBloc, BaseState>(
+      buildWhen: (previous, current) {
+        return current is FavoriteState || current is NormalState;
+      },
+      builder: (context, state) {
+        return FavoriteButton(
+          bloc: Provider.of<FavoriteBloc>(context, listen: false),
+          state: state,
+          movie: movie,
         );
       },
     );
@@ -419,7 +387,7 @@ class _DetailPageState extends State<DetailPage> {
             Padding(
               padding: EdgeInsets.only(top: 8),
               child: Text(
-                movie.releaseDate.year.toString(),
+                getYearOfMovie(movie),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -581,7 +549,10 @@ Widget _getFailureContainer(DetailLoadFailure state) {
             size: 80.0,
           ),
           SizedBox(height: 16.0),
-          Text('${state.error.toString()}'),
+          Text(
+            '${state.error.toString()}',
+            style: TextStyle(color: Colors.white),
+          ),
         ],
       ),
     ),

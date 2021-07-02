@@ -26,7 +26,7 @@ class DatabaseProvider {
             id INTEGER PRIMARY KEY,
             poster_path TEXT,
             title TEXT,
-            release_date INTEGER,
+            release_date TEXT,
             vote_average REAL
         )""");
       },
@@ -64,7 +64,7 @@ class DatabaseProvider {
           id: maps[index]['id'],
           posterPath: maps[index]['poster_path'],
           title: maps[index]['title'],
-          releaseDate: _coverToDateTime(maps[index]['release_date']),
+          releaseDate: maps[index]['release_date'],
           voteAverage: maps[index]['vote_average'],
         );
       },
@@ -83,9 +83,5 @@ class DatabaseProvider {
     final result = await db.update(TABLE_FAVORITE, movie.toMap(),
         where: "id = ?", whereArgs: [movie.id]);
     return result >= 0;
-  }
-
-  DateTime _coverToDateTime(int millisecondsSinceE) {
-    return DateTime.fromMillisecondsSinceEpoch(millisecondsSinceE, isUtc: true);
   }
 }

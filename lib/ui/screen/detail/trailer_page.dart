@@ -13,7 +13,7 @@ class TrailerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     YoutubePlayerController _controller = YoutubePlayerController(
-      initialVideoId: _getRandomKey(videos),
+      initialVideoId: _getKey(videos),
       flags: YoutubePlayerFlags(
         autoPlay: true,
         mute: false,
@@ -45,7 +45,10 @@ class TrailerPage extends StatelessWidget {
   }
 }
 
-String _getRandomKey(List<Video> videos) {
+String _getKey(List<Video> videos) {
+  if(videos.length == 1){
+    return videos[0].key;
+  }
   final _random = new Random();
   int index = _random.nextInt(videos.length - 1);
   return videos[index].key;

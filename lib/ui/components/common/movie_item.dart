@@ -22,7 +22,7 @@ class MovieItem extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                '${Urls.originalImagePath}${movie.posterPath}',
+                '${Urls.w500ImagePath}${movie.posterPath}',
                 fit: BoxFit.cover,
               ),
             ),
@@ -91,5 +91,10 @@ class MovieItem extends StatelessWidget {
 }
 
 String getYearOfMovie(Movie movie) {
-  return movie.releaseDate?.year?.toString() ?? 'Unknown';
+  if (movie.releaseDate == null) {
+    return 'Unknown';
+  }
+  return movie.releaseDate.isEmpty
+      ? 'Unknown'
+      : movie.releaseDate.substring(0, 4);
 }
