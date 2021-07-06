@@ -10,6 +10,7 @@ class MovieRepository {
 
   Future<List<HomeViewModel>> getHomeMovies() async {
     return await Future.wait([
+      _buildHomeViewModel('Trending'),
       _buildHomeViewModel('Now Playing'),
       _buildHomeViewModel('Popular'),
       _buildHomeViewModel('Top Rated'),

@@ -20,10 +20,16 @@ class Api {
   final Dio dio;
 
   Future<List<Movie>> getMovies(String type, [int page = 1]) async {
-    final response = await dio.get(
-      '${Urls.movieUrl}/${type.toLowerCaseUnderScore()}',
-      queryParameters: {'page': page},
-    );
+    var response;
+    if (type == 'Trending') {
+      response = await dio
+          .get('${Urls.moviesTrendingPath}', queryParameters: {'page': page});
+    } else {
+      response = await dio.get(
+        '${Urls.movieUrl}/${type.toLowerCaseUnderScore()}',
+        queryParameters: {'page': page},
+      );
+    }
     final movies = MovieList.fromJson(response.data).movies;
     return movies;
   }

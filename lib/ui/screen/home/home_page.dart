@@ -3,11 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:td_movie/blocs/blocs.dart';
 import 'package:td_movie/blocs/movies_by_type/movies_by_type_bloc.dart';
 import 'package:td_movie/di/injection.dart';
-import 'package:td_movie/domain/model/models.dart';
-import 'package:td_movie/ui/components/common/route_to_detail.dart';
 import 'package:td_movie/platform/repositories/movie_repository.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
-import 'package:td_movie/ui/screen/detail/detail_page.dart';
+import 'package:td_movie/ui/components/common/route_to_detail.dart';
 import 'package:td_movie/ui/screen/movie_by_type/movies_by_type_page.dart';
 
 import 'home_view_model.dart';
@@ -16,7 +14,6 @@ class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _HomePageState();
 }
-
 
 class _HomePageState extends State<HomePage> {
   @override
@@ -106,7 +103,7 @@ class _HomePageState extends State<HomePage> {
             ),
             MaterialButton(
               child: Text(
-                'Show All',
+                'More',
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -154,24 +151,15 @@ class _HomePageState extends State<HomePage> {
 
   Route _navigateToMoviesByType(String type) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          BlocProvider(
-            create: (_) =>
-            MoviesByTypeBloc(
-              movieRepository: getIt.get<MovieRepository>(),
-            )
-              ..add(MovieListFetched(type)),
-            child: MoviesByTypePage(type: type),
-          ),
+      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
+        create: (_) => MoviesByTypeBloc(
+          movieRepository: getIt.get<MovieRepository>(),
+        )..add(MovieListFetched(type)),
+        child: MoviesByTypePage(type: type),
+      ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final begin = Offset(1.0, 0.0);
-        final end = Offset.zero;
-        final curveTween = CurveTween(curve: Curves.ease);
-        final tween = Tween(begin: begin, end: end).chain(curveTween);
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
+        return buildCommonTransitions(
+            context, animation, secondaryAnimation, child);
       },
     );
   }
