@@ -2,6 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sealed_class/sealed_class.dart';
 import 'package:td_movie/domain/model/genre.dart';
 import 'package:td_movie/platform/repositories/genres_repository.dart';
 

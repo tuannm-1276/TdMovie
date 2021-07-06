@@ -7,6 +7,7 @@ import 'package:td_movie/blocs/genres/genres_bloc.dart';
 import 'package:td_movie/blocs/movies_by_genre/blocs.dart';
 import 'package:td_movie/platform/repositories/genres_repository.dart';
 import 'package:td_movie/platform/repositories/movie_repository.dart';
+import 'package:td_movie/ui/components/common/failure_widget.dart';
 import 'package:td_movie/ui/components/common/route_to_detail.dart';
 import 'package:td_movie/ui/screen/genres/movies_by_genre_page.dart';
 
@@ -197,25 +198,8 @@ class _Tile extends StatelessWidget {
   }
 }
 
-Widget _getFailureContainer(GenresLoadFailure state) {
-  return Container(
-    color: Colors.black,
-    child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error,
-            color: Colors.red,
-            size: 80.0,
-          ),
-          SizedBox(height: 16.0),
-          Text('${state.error.toString()}'),
-        ],
-      ),
-    ),
-  );
-}
+Widget _getFailureContainer(GenresLoadFailure state) =>
+    FailureWidget(message: state.error.toString());
 
 Widget _getInProgressContainer(GenresLoadInProgress state) {
   return Container(

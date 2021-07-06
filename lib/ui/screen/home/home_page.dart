@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _HomePageState();
 }
 
+
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
@@ -153,34 +154,15 @@ class _HomePageState extends State<HomePage> {
 
   Route _navigateToMoviesByType(String type) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
-        create: (_) => MoviesByTypeBloc(
-          movieRepository: getIt.get<MovieRepository>(),
-        )..add(MovieListFetched(type)),
-        child: MoviesByTypePage(type: type),
-      ),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final begin = Offset(1.0, 0.0);
-        final end = Offset.zero;
-        final curveTween = CurveTween(curve: Curves.ease);
-        final tween = Tween(begin: begin, end: end).chain(curveTween);
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
-  Route _navigateToDetail(Movie movie) {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
-        create: (context) {
-          return DetailBloc(movieRepository: getIt.get<MovieRepository>())
-            ..add(DetailLoaded(movie.id));
-        },
-        child: DetailPage(),
-      ),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          BlocProvider(
+            create: (_) =>
+            MoviesByTypeBloc(
+              movieRepository: getIt.get<MovieRepository>(),
+            )
+              ..add(MovieListFetched(type)),
+            child: MoviesByTypePage(type: type),
+          ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         final begin = Offset(1.0, 0.0);
         final end = Offset.zero;

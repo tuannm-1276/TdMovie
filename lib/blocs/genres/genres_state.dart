@@ -1,6 +1,7 @@
 
 part of 'genres_bloc.dart';
 
+@Sealed([GenresLoadSuccess, GenresLoadFailure, GenresLoadInProgress])
 abstract class GenresState extends Equatable {
   const GenresState();
 

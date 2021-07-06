@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:td_movie/base/base.dart';
 import 'package:td_movie/blocs/movies_by_genre/blocs.dart';
@@ -8,7 +7,7 @@ import 'package:td_movie/platform/services/api/api.dart';
 class MoviesByGenreBloc extends Bloc<BaseEvent, BaseState> {
   final MovieRepository movieRepository;
 
-  MoviesByGenreBloc(@required this.movieRepository) : super(InitState());
+  MoviesByGenreBloc(this.movieRepository) : super(InitState());
 
   @override
   Stream<BaseState> mapEventToState(BaseEvent event) async* {

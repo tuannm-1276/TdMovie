@@ -58,4 +58,11 @@ class Api {
     movieList.genreId = genreId;
     return movieList;
   }
+
+  Future<MovieList> searchMovies(String query, [int page = 1]) async {
+    final response = await dio.get('${Urls.searchMovieUrl}',
+        queryParameters: {'query': query, 'page': page});
+    final movieList = MovieList.fromJson(response.data);
+    return movieList;
+  }
 }

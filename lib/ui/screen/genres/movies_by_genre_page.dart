@@ -45,6 +45,7 @@ class _MoviesByGenrePageState extends State<MoviesByGenrePage> {
           builder: (context, state) {
             if (state is LoadedState<MovieList>) {
               final List<Movie> movies = state.data.movies ?? [];
+              final width = (MediaQuery.of(context).size.width / 2) - 16;
               return GridView.count(
                 controller: _scrollController,
                 crossAxisSpacing: 12.0,
@@ -57,7 +58,10 @@ class _MoviesByGenrePageState extends State<MoviesByGenrePage> {
                       : movies.length,
                   (index) => index < movies.length
                       ? GestureDetector(
-                          child: MovieItem(movie: movies[index]),
+                          child: MovieItem(
+                            movie: movies[index],
+                            width: width,
+                          ),
                           onTap: () {
                             Navigator.of(context).push(
                               navigateToDetail(movies[index]),

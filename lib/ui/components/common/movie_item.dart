@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:td_movie/domain/model/models.dart';
 import 'package:td_movie/platform/services/api/urls.dart';
 

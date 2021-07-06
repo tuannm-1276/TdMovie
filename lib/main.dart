@@ -8,6 +8,7 @@ import 'package:td_movie/platform/repositories/movie_repository.dart';
 import 'package:td_movie/ui/components/bubble_bottom_navigation/bubble_bottom_navigation.dart';
 import 'package:td_movie/ui/screen/favorite/favorite_page.dart';
 import 'package:td_movie/ui/screen/genres/genres_page.dart';
+import 'package:td_movie/ui/screen/search/search_page.dart';
 
 import 'extension/iterable_ext.dart';
 import 'ui/components/common/screen_with_tab.dart';
@@ -25,6 +26,26 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.dark,
+      // Change it as you want
+      theme: ThemeData(
+          primaryColor: Colors.white,
+          primaryColorBrightness: Brightness.light,
+          brightness: Brightness.light,
+          primaryColorDark: Colors.black,
+          canvasColor: Colors.white,
+          // next line is important!
+          appBarTheme: AppBarTheme(brightness: Brightness.light)),
+      darkTheme: ThemeData(
+          primaryColor: Colors.black,
+          primaryColorBrightness: Brightness.dark,
+          primaryColorLight: Colors.black,
+          brightness: Brightness.dark,
+          primaryColorDark: Colors.black,
+          indicatorColor: Colors.white,
+          canvasColor: Colors.black,
+          // next line is important!
+          appBarTheme: AppBarTheme(brightness: Brightness.dark)),
       home: MainPage(),
     );
   }
@@ -108,6 +129,17 @@ class _MainPageState extends State<MainPage> implements FavoriteDataHandle {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.search_outlined,
+              color: Colors.white,
+            ),
+            onPressed: _navigateToSearchPage,
+          )
+        ],
+      ),
       body: IndexedStack(
         index: _currentPage,
         children: _screens.map((e) => e.page).toList(),
@@ -124,6 +156,29 @@ class _MainPageState extends State<MainPage> implements FavoriteDataHandle {
         items: _buildBottomNavigationTabs(),
       ),
     );
+  }
+
+  void _navigateToSearchPage() {
+    final searchPage = PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
+        create: (_) => SearchBloc(getIt.get())..add(TextChangedEvent()),
+        child: SearchPage(
+          searchFieldLabel: 'Enter movie name',
+        ),
+      ),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final begin = Offset(1.0, 0.0);
+        final end = Offset.zero;
+        final curveTween = CurveTween(curve: Curves.ease);
+        final tween = Tween(begin: begin, end: end).chain(curveTween);
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+    Navigator.of(context).push(searchPage);
+    // showSearch(context: context, delegate: MovieSearchDelegate(getIt.get()));
   }
 
   @override
