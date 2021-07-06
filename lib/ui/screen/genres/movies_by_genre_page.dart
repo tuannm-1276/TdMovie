@@ -66,14 +66,14 @@ class _MoviesByGenrePageState extends State<MoviesByGenrePage> {
                         )
                       : Center(
                           child: ProgressLoading(
-                            size: 20,
+                            size: 28,
                           ),
                         ),
                 ),
               );
             }
             return Center(
-              child: ProgressLoading(size: 24),
+              child: ProgressLoading(size: 32),
             );
           },
         ),

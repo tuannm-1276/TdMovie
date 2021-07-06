@@ -8,7 +8,7 @@ class ProgressLoading extends StatelessWidget {
   const ProgressLoading({
     Key key,
     this.size = 16,
-    this.valueColor = Colors.black,
+    this.valueColor = Colors.white,
     this.strokeWidth = 2,
   }) : super(key: key);
 

@@ -63,6 +63,12 @@ class _FavoriteButtonState extends State<FavoriteButton>
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 }
 
 Widget _getFavoriteIconWithState(BaseState state) {
