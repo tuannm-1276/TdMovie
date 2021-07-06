@@ -1,6 +1,7 @@
 class Urls {
   static const _baseUrl = 'https://api.themoviedb.org/3';
   static const movieUrl = '$_baseUrl/movie';
+  static const searchMovieUrl = '$_baseUrl/search/movie';
 
   // Image
   static const _baseImageUrl = 'https://image.tmdb.org/t/p';

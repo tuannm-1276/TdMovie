@@ -19,7 +19,7 @@ class MovieRepository {
 
   Future<HomeViewModel> _buildHomeViewModel(String headerTitle) async {
     final movies = await api.getMovies(headerTitle);
-    return HomeViewModel(headerTitle: headerTitle, items: movies);
+    return HomeViewModel(headerTitle: headerTitle, items: movies.sublist(0, 10));
   }
 
   Future<List<Movie>> getMoviesByType(String type, [int page = 1]) async =>
@@ -32,4 +32,7 @@ class MovieRepository {
 
   Future<MovieList> getMovieListByGenre(int genreId, {int page = 1}) =>
       api.getMovieListByGenre(genreId, page: page);
+      
+  Future<MovieList> searchMovies(String query, [int page = 1]) async =>
+      await api.searchMovies(query, page);
 }

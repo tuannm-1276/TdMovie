@@ -29,6 +29,7 @@ class MoviesByTypeBloc extends Bloc<MoviesByTypeEvent, MoviesByTypeState> {
 
   @override
   Stream<MoviesByTypeState> mapEventToState(MoviesByTypeEvent event) async* {
+    print('===MapEventToState - MovieByTypeBloc===');
     if (event is MovieListFetched) {
       yield await _mapMovieListFetchedToState(state, event.type);
     }
