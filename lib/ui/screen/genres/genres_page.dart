@@ -1,7 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:td_movie/base/base.dart';
 import 'package:td_movie/blocs/genres/genres_bloc.dart';
 import 'package:td_movie/blocs/movies_by_genre/blocs.dart';
 import 'package:td_movie/platform/repositories/genres_repository.dart';
@@ -32,10 +33,11 @@ class GenresView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/bg_genres.jpeg"),
+            image: _getImage(),
             fit: BoxFit.cover,
           ),
         ),
@@ -260,4 +262,28 @@ Route navigateToMoviesByGenre(Genre genre) {
       child,
     ),
   );
+}
+
+_getImage() {
+  final _random = Random();
+  int imageIndex = 1 + _random.nextInt(4);
+  switch (imageIndex) {
+    case 1:
+      return AssetImage("assets/images/wrath_of_man.jpeg");
+      break;
+    case 2:
+      return AssetImage("assets/images/nobody.jpeg");
+      break;
+    case 3:
+      return AssetImage("assets/images/raya.jpeg");
+      break;
+    case 4:
+      return AssetImage("assets/images/mortal_kombat.jpeg");
+      break;
+    case 5:
+      return AssetImage("assets/images/the_tomorrow_war.jpeg");
+      break;
+    default:
+      return AssetImage("assets/images/wrath_of_man.jpeg");
+  }
 }

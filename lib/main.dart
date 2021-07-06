@@ -35,7 +35,7 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> implements FavoriteDataHandle {
   int _currentPage = 0;
   final _screens = [
     ScreenWithTab(
@@ -58,7 +58,9 @@ class _MainPageState extends State<MainPage> {
       icon: Icons.category,
     ),
     ScreenWithTab(
-      page: FavoriteScreen(),
+      page: FavoriteScreen(
+        key: GlobalKey(),
+      ),
       title: 'Favorite',
       color: Colors.teal,
       icon: Icons.favorite,
@@ -66,7 +68,30 @@ class _MainPageState extends State<MainPage> {
   ];
 
   void _changePage(int page) {
+    if (page == 2) {
+      _rebuildFavoriteScreen();
+    }
     setState(() => _currentPage = page);
+  }
+
+  void _rebuildFavoriteScreen() {
+    setState(
+      () {
+        _screens.removeAt(2);
+        _screens.insert(
+          2,
+          ScreenWithTab(
+            page: FavoriteScreen(
+              key: GlobalKey(),
+              favoriteDataHandle: this,
+            ),
+            title: 'Favorite',
+            color: Colors.teal,
+            icon: Icons.favorite,
+          ),
+        );
+      },
+    );
   }
 
   List<BubbleBottomNavigationBarItem> _buildBottomNavigationTabs() {
@@ -100,4 +125,13 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+
+  @override
+  void update() {
+    _rebuildFavoriteScreen();
+  }
+}
+
+abstract class FavoriteDataHandle {
+  void update();
 }

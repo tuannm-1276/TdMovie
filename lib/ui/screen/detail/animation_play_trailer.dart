@@ -79,4 +79,10 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 }

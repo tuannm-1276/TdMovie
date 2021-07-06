@@ -10,7 +10,6 @@ import 'package:td_movie/extension//build_context_ext.dart';
 import 'package:td_movie/platform/services/api/urls.dart';
 import 'package:td_movie/ui/components/collapsed_appbar_title.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
-import 'package:td_movie/ui/components/common/progress_loading.dart';
 import 'package:td_movie/ui/components/rating_bar_indicator.dart';
 import 'package:td_movie/ui/screen/detail/animation_favorite.dart';
 import 'package:td_movie/ui/screen/detail/animation_play_trailer.dart';
