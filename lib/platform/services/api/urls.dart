@@ -1,7 +1,7 @@
 class Urls {
-  static const baseUrl = 'https://api.themoviedb.org/3';
-  static const movieUrl = '$baseUrl/movie';
-  static const searchMovieUrl = '$baseUrl/search/movie';
+  static const _baseUrl = 'https://api.themoviedb.org/3';
+  static const movieUrl = '$_baseUrl/movie';
+  static const searchMovieUrl = '$_baseUrl/search/movie';
 
   // Image
   static const _baseImageUrl = 'https://image.tmdb.org/t/p';
@@ -11,11 +11,11 @@ class Urls {
   static const w342ImagePath = '$_baseImageUrl/w342';
 
   // genres
-  static const genresListPath = '$baseUrl/genre/movie/list';
+  static const genresListPath = '$_baseUrl/genre/movie/list';
 
   // movies by genre
-  static const moviesByGenresPath = '$baseUrl/discover/movie';
+  static const moviesByGenresPath = '$_baseUrl/discover/movie';
 
   // trending movie of week
-static const moviesTrendingPath = '$baseUrl/trending/movie/week';
+static const moviesTrendingPath = '$_baseUrl/trending/movie/week';
 }

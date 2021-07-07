@@ -6,31 +6,24 @@ class MovieItem extends StatelessWidget {
   const MovieItem({
     Key key,
     @required this.movie,
-    this.height,
-    this.width,
   }) : super(key: key);
 
   final Movie movie;
-  final double height;
-  final double width;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width,
-      height: width * 3,
-      child: Wrap(
+      width: 150,
+      height: 300,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: width * 1.5,
-            width: width,
+          Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
                 '${Urls.w500ImagePath}${movie.posterPath}',
                 fit: BoxFit.cover,
-                width: width,
-                height: width * 1.5,
               ),
             ),
           ),
@@ -45,30 +38,36 @@ class MovieItem extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.only(top: 4),
-                  child: Center(
-                    child: Text(
-                      movie.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 4),
                   child: Row(
                     children: [
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 4),
+                          child: Text(
+                            movie.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
                       Text(
                         '(${getYearOfMovie(movie)})',
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.5),
                         ),
                       ),
-                      Spacer(),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Row(
+                    children: [
                       Icon(
                         Icons.star,
                         color: Colors.yellow,

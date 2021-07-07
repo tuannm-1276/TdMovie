@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
             ),
             MaterialButton(
               child: Text(
-                'More',
+                'Show All',
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -133,8 +133,6 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: MovieItem(
                       movie: movie,
-                      height: 300,
-                      width: 150,
                     ),
                   ),
                   onTap: () {

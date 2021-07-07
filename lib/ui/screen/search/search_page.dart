@@ -175,7 +175,6 @@ class _SearchPageState extends State<SearchPage> {
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         child: MovieItem(
                           movie: successState.movies[index],
-                          width: width,
                         ),
                       ),
                       onTap: () => navigateToDetail(successState.movies[index]),

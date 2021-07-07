@@ -65,7 +65,6 @@ class _MoviesByTypePageState extends State<MoviesByTypePage> {
                             padding: EdgeInsets.symmetric(horizontal: 8),
                             child: MovieItem(
                               movie: state.movies[index],
-                              width: width,
                             ),
                           ),
                           onTap: () => _navigateToDetail(state.movies[index]),
