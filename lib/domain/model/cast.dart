@@ -11,7 +11,6 @@ class Cast {
     this.gender,
     this.id,
     this.knownForDepartment,
-    this.name,
     this.originalName,
     this.popularity,
     this.profilePath,
@@ -19,6 +18,12 @@ class Cast {
     this.character,
     this.creditId,
     this.order,
+    this.biography,
+    this.alsoKnownAs,
+    this.birthday,
+    this.deathday,
+    this.placeOfBirth,
+    this.name,
   });
 
   bool adult;
@@ -26,7 +31,6 @@ class Cast {
   int id;
   @JsonKey(name: 'known_for_department')
   Department knownForDepartment;
-  String name;
   @JsonKey(name: 'original_name')
   String originalName;
   double popularity;
@@ -38,6 +42,18 @@ class Cast {
   @JsonKey(name: 'credit_id')
   String creditId;
   int order;
+  @JsonKey(name: 'biography')
+  String biography;
+  @JsonKey(name: 'also_known_as')
+  List<String> alsoKnownAs;
+  @JsonKey(name: 'birthday')
+  String birthday;
+  @JsonKey(name: 'deathday')
+  String deathday;
+  @JsonKey(name: 'place_of_birth')
+  String placeOfBirth;
+  @JsonKey(name: 'name')
+  String name;
 
   factory Cast.fromJson(Map<String, dynamic> json) => _$CastFromJson(json);
 

@@ -476,7 +476,7 @@ class _DetailPageState extends State<DetailPage> {
                 ),
                 onTap: () {
                   final snackBar = SnackBar(
-                    content: Text(cast.name),
+                    content: Text(cast.originalName),
                     duration: const Duration(milliseconds: 500),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);

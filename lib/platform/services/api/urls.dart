@@ -15,4 +15,7 @@ class Urls {
 
   // movies by genre
   static const moviesByGenresPath = '$_baseUrl/discover/movie';
+
+  // trending movie of week
+static const moviesTrendingPath = '$_baseUrl/trending/movie/week';
 }
