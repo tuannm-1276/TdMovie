@@ -65,6 +65,20 @@ class Api {
     return movieList;
   }
 
+  Future<MovieList> getMovieListByType(String type, {int page = 1}) async {
+    var response;
+    if (type == 'Trending') {
+      response = await dio
+          .get('${Urls.moviesTrendingPath}', queryParameters: {'page': page});
+    } else {
+      response = await dio.get(
+        '${Urls.movieUrl}/${type.toLowerCaseUnderScore()}',
+        queryParameters: {'page': page},
+      );
+    }
+    return MovieList.fromJson(response.data);
+  }
+
   Future<MovieList> searchMovies(String query, [int page = 1]) async {
     final response = await dio.get('${Urls.searchMovieUrl}',
         queryParameters: {'query': query, 'page': page});

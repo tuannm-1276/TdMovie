@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:td_movie/blocs/blocs.dart';
+import 'package:td_movie/base/base_state.dart';
 import 'package:td_movie/blocs/movies_by_type/movies_by_type_bloc.dart';
-import 'package:td_movie/di/injection.dart';
-import 'package:td_movie/domain/model/models.dart';
-import 'package:td_movie/platform/repositories/movie_repository.dart';
-import 'package:td_movie/ui/components/common/bottom_loader.dart';
+import 'package:td_movie/blocs/movies_by_type/movies_by_type_event.dart';
+import 'package:td_movie/domain/model/movie.dart';
+import 'package:td_movie/platform/services/api/response/movie_list.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
-import 'package:td_movie/ui/screen/detail/detail_page.dart';
+import 'package:td_movie/ui/components/common/progress_loading.dart';
+import 'package:td_movie/ui/components/common/route_to_detail.dart';
 
 class MoviesByTypePage extends StatefulWidget {
-  MoviesByTypePage({Key key, this.type}) : super(key: key);
-
   final String type;
+
+  const MoviesByTypePage({Key key, this.type}) : super(key: key);
 
   @override
   _MoviesByTypePageState createState() => _MoviesByTypePageState();
@@ -20,14 +20,12 @@ class MoviesByTypePage extends StatefulWidget {
 
 class _MoviesByTypePageState extends State<MoviesByTypePage> {
   final _scrollController = ScrollController();
-  MoviesByTypeBloc _moviesBloc;
+  final _scrollThreshold = 20;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    // _moviesBloc = BlocProvider.of<MoviesByTypeBloc>(context);
-    _moviesBloc = context.read<MoviesByTypeBloc>();
   }
 
   @override
@@ -35,122 +33,68 @@ class _MoviesByTypePageState extends State<MoviesByTypePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(widget.type),
         backgroundColor: Colors.black,
+        title: Text(
+          widget.type,
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
-      body: BlocBuilder<MoviesByTypeBloc, MoviesByTypeState>(
+      body: Container(
+        margin: const EdgeInsets.all(12.0),
+        child: BlocBuilder<MoviesByTypeBloc, BaseState>(
           builder: (context, state) {
-        switch (state.status) {
-          case MovieListStatus.success:
-            if (state.movies.isEmpty) {
-              return Center(child: Text('No Movies'));
-            }
-            final width = (MediaQuery.of(context).size.width / 2) - 16;
-            return Padding(
-              padding: EdgeInsets.only(left: 0),
-              child: GridView.builder(
+            if (state is LoadedState<MovieList>) {
+              final List<Movie> movies = state.data.movies ?? [];
+              return GridView.count(
                 controller: _scrollController,
-                itemCount: state.isEndReached
-                    ? state.movies.length
-                    : state.movies.length + 1,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisExtent: width * 2,
-                ),
-                itemBuilder: (context, index) {
-                  return index >= state.movies.length
-                      ? BottomLoader()
-                      : InkWell(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            child: MovieItem(
-                              movie: state.movies[index],
-                            ),
-                          ),
-                          onTap: () => _navigateToDetail(state.movies[index]),
-                        );
-                },
-              ),
-            );
-          case MovieListStatus.failure:
-            return Container(
-              color: Colors.black,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error,
-                      color: Colors.red,
-                      size: 80.0,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
+                childAspectRatio: (1 / 2),
+                crossAxisCount: 2,
+                children: List.generate(
+                  state.data.page < state.data.totalPages
+                      ? movies.length + 1
+                      : movies.length,
+                      (index) => index < movies.length
+                      ? GestureDetector(
+                    child: MovieItem(
+                      movie: movies[index],
                     ),
-                    SizedBox(height: 16.0),
-                    Text('Error'),
-                  ],
-                ),
-              ),
-            );
-          default:
-            return Container(
-              color: Colors.black,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16.0),
-                    Text(
-                      'Loading at the moment, please hold the line.',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        navigateToDetail(movies[index]),
+                      );
+                    },
+                  )
+                      : Center(
+                    child: ProgressLoading(
+                      size: 28,
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              );
+            }
+            return Center(
+              child: ProgressLoading(size: 32),
             );
-        }
-      }),
+          },
+        ),
+      ),
     );
+  }
+
+  _onScroll() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (maxScroll - currentScroll <= _scrollThreshold) {
+      BlocProvider.of<MoviesByTypeBloc>(context)
+          .add(LoadMoreMoviesByType(widget.type));
+    }
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    if (_isBottom) _moviesBloc.add(MovieListFetched(widget.type));
-  }
-
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
-  }
-
-  void _navigateToDetail(Movie movie) {
-    final detailPage = PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
-        create: (context) {
-          return DetailBloc(movieRepository: getIt.get<MovieRepository>())
-            ..add(DetailLoaded(movie.id));
-        },
-        child: DetailPage(),
-      ),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final begin = Offset(1.0, 0.0);
-        final end = Offset.zero;
-        final curveTween = CurveTween(curve: Curves.ease);
-        final tween = Tween(begin: begin, end: end).chain(curveTween);
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-    Navigator.of(context).push(detailPage);
   }
 }

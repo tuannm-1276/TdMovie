@@ -1,5 +1,4 @@
 export './home/home_bloc.dart';
 export './detail/detail_bloc.dart';
-export './movies_by_type/movies_by_type_bloc.dart';
 export './search/search_bloc.dart';
 export './movie_bloc_observer.dart';

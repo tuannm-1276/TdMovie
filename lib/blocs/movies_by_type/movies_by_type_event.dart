@@ -1,14 +1,13 @@
-part of 'movies_by_type_bloc.dart';
+import 'package:td_movie/base/base.dart';
 
-abstract class MoviesByTypeEvent extends Equatable {
-  const MoviesByTypeEvent();
-
-  @override
-  List<Object> get props => [];
-}
-
-class MovieListFetched extends MoviesByTypeEvent {
+class GetMoviesByType extends BaseEvent{
   final String type;
 
-  const MovieListFetched(this.type);
+  GetMoviesByType(this.type);
+}
+
+class LoadMoreMoviesByType extends BaseEvent{
+  final String type;
+
+  LoadMoreMoviesByType(this.type);
 }
