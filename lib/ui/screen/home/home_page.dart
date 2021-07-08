@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:td_movie/blocs/blocs.dart';
 import 'package:td_movie/blocs/movies_by_type/movies_by_type_bloc.dart';
+import 'package:td_movie/blocs/movies_by_type/movies_by_type_event.dart';
 import 'package:td_movie/di/injection.dart';
 import 'package:td_movie/platform/repositories/movie_repository.dart';
 import 'package:td_movie/ui/components/common/movie_item.dart';
@@ -103,7 +104,7 @@ class _HomePageState extends State<HomePage> {
             ),
             MaterialButton(
               child: Text(
-                'Show All',
+                'Show More',
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -149,16 +150,27 @@ class _HomePageState extends State<HomePage> {
 
   Route _navigateToMoviesByType(String type) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => BlocProvider(
+      pageBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+      ) => BlocProvider(
         create: (_) => MoviesByTypeBloc(
-          movieRepository: getIt.get<MovieRepository>(),
-        )..add(MovieListFetched(type)),
+          getIt.get<MovieRepository>(),
+        )..add(GetMoviesByType(type)),
         child: MoviesByTypePage(type: type),
       ),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return buildCommonTransitions(
-            context, animation, secondaryAnimation, child);
-      },
+      transitionsBuilder: (
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ) => buildCommonTransitions(
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      ),
     );
   }
 }

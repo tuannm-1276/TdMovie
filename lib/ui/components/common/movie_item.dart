@@ -22,7 +22,7 @@ class MovieItem extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                '${Urls.w500ImagePath}${movie.posterPath}',
+                '${Urls.w342ImagePath}${movie.posterPath}',
                 fit: BoxFit.cover,
               ),
             ),

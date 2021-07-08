@@ -1,66 +1,38 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:td_movie/domain/model/models.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:td_movie/base/base.dart';
 import 'package:td_movie/platform/repositories/movie_repository.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:td_movie/platform/services/api/api.dart';
 
-part 'movies_by_type_event.dart';
+import 'blocs.dart';
 
-part 'movies_by_type_state.dart';
-
-class MoviesByTypeBloc extends Bloc<MoviesByTypeEvent, MoviesByTypeState> {
-  MoviesByTypeBloc({this.movieRepository}) : super(MoviesByTypeState());
-
+class MoviesByTypeBloc extends Bloc<BaseEvent, BaseState> {
   final MovieRepository movieRepository;
 
-  @override
-  Stream<Transition<MoviesByTypeEvent, MoviesByTypeState>> transformEvents(
-    Stream<MoviesByTypeEvent> events,
-    transitionFn,
-  ) {
-    // TODO: implement transformEvents
-    return super.transformEvents(
-      events.debounceTime(Duration(milliseconds: 500)),
-      transitionFn,
-    );
-  }
+  MoviesByTypeBloc(this.movieRepository) : super(InitState());
 
   @override
-  Stream<MoviesByTypeState> mapEventToState(MoviesByTypeEvent event) async* {
-    print('===MapEventToState - MovieByTypeBloc===');
-    if (event is MovieListFetched) {
-      yield await _mapMovieListFetchedToState(state, event.type);
-    }
-  }
-
-  Future<MoviesByTypeState> _mapMovieListFetchedToState(
-      MoviesByTypeState state, String type) async {
-    if (state.isEndReached) return state;
-    try {
-      if (state.status == MovieListStatus.initial) {
-        final movies = await movieRepository.getMoviesByType(type);
-        return state.copyWith(
-          status: MovieListStatus.success,
-          movies: movies,
-          isEndReached: false,
-          page: state.page + 1,
-        );
+  Stream<BaseState> mapEventToState(BaseEvent event) async* {
+    if (event is GetMoviesByType) {
+      try {
+        yield LoadingState();
+        final movieList = await movieRepository.getMoviesByType(event.type);
+        yield LoadedState(data: movieList);
+      } catch (e) {
+        yield (ErrorState(data: e.toString()));
       }
+    }
 
-      final movies =
-          await movieRepository.getMoviesByType(type, state.page);
-      return movies.isEmpty
-          ? state.copyWith(isEndReached: true)
-          : state.copyWith(
-              status: MovieListStatus.success,
-              movies: List.of(state.movies)..addAll(movies),
-              isEndReached: false,
-              page: state.page + 1,
-            );
-    } on Exception {
-      return state.copyWith(status: MovieListStatus.failure);
+    if (event is LoadMoreMoviesByType) {
+      try {
+        final movieList = (state as LoadedState<MovieList>).data;
+        final movieListMore = await movieRepository.getMoviesByType(event.type,
+            page: movieList.page + 1);
+
+        movieListMore.movies = movieList.movies + movieListMore.movies;
+        yield LoadedState(data: movieListMore);
+      } catch (e) {
+        yield (ErrorState(data: e.toString()));
+      }
     }
   }
 }

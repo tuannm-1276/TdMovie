@@ -129,17 +129,6 @@ class _MainPageState extends State<MainPage> implements FavoriteDataHandle {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search_outlined,
-              color: Colors.white,
-            ),
-            onPressed: _navigateToSearchPage,
-          )
-        ],
-      ),
       body: IndexedStack(
         index: _currentPage,
         children: _screens.map((e) => e.page).toList(),

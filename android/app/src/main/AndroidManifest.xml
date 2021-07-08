@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sun.td_movie">
    <application
-        android:label="td_movie"
+        android:label="TD Movie"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
